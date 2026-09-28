@@ -1,0 +1,9 @@
+{
+  "name": "The Decor Studio",
+  "description": "Where Every Corner Tells a Story. Luxury South Indian and modern home decor with bespoke white kolam art and an AI Decor Stylist.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
+
