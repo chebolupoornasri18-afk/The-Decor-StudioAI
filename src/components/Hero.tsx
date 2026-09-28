@@ -1,4 +1,5 @@
 import React from 'react';
+import heroImage from '../assets/images/hero_luxury_indian_room_1790614637897.jpg';
 import { CircularMandalaKolam, KolamCorner, LotusKolam } from './kolam/KolamPatterns';
 import { Sparkles, ArrowRight, ShieldCheck, Truck, Sparkle } from 'lucide-react';
 
@@ -118,7 +119,7 @@ export const Hero: React.FC<HeroProps> = ({ onShopClick, onAIClick }) => {
               {/* Main Room Showcase Image */}
               <div className="relative rounded-md overflow-hidden shadow-2xl border border-[#FAF8F5]/10 bg-[#290812]">
                 <img
-                  src="/src/assets/images/hero_luxury_indian_room_1790614637897.jpg"
+                  src={heroImage}
                   alt="Luxurious South Indian living room with antique brass lamps, glazed pottery, carved wood and warm lighting"
                   className="w-full h-[360px] sm:h-[440px] object-cover object-center transform hover:scale-[1.02] transition-transform duration-700"
                   referrerPolicy="no-referrer"
