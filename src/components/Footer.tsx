@@ -4,9 +4,10 @@ import { ArrowRight, CheckCircle2, Heart, Mail } from 'lucide-react';
 
 interface FooterProps {
   onNavigateToSection: (sectionId: string) => void;
+  onOpenChatbot?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onNavigateToSection }) => {
+export const Footer: React.FC<FooterProps> = ({ onNavigateToSection, onOpenChatbot }) => {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
@@ -85,6 +86,18 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateToSection }) => {
             AI Decor Assistant
           </button>
           <span className="text-[#D4AF37]/40">&bull;</span>
+          {onOpenChatbot && (
+            <>
+              <button
+                onClick={onOpenChatbot}
+                className="text-[#D4AF37] hover:text-[#E6CA65] transition-colors cursor-pointer flex items-center gap-1 font-serif"
+              >
+                <span>AI Chatbot</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              </button>
+              <span className="text-[#D4AF37]/40">&bull;</span>
+            </>
+          )}
           <button
             onClick={() => onNavigateToSection('inspiration')}
             className="hover:text-[#E6CA65] transition-colors cursor-pointer"

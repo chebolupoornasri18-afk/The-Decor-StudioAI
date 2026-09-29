@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { LotusKolam } from './kolam/KolamPatterns';
-import { ShoppingBag, Heart, Sparkles, Menu, X, Compass } from 'lucide-react';
+import { ShoppingBag, Heart, Sparkles, Menu, X, Compass, MessageSquare } from 'lucide-react';
 
 interface NavbarProps {
   cartCount: number;
@@ -9,6 +9,7 @@ interface NavbarProps {
   onOpenCart: () => void;
   onOpenWishlist: () => void;
   onOpenAIPlan: () => void;
+  onOpenChatbot?: () => void;
   onNavigateToSection: (sectionId: string) => void;
 }
 
@@ -19,6 +20,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenCart,
   onOpenWishlist,
   onOpenAIPlan,
+  onOpenChatbot,
   onNavigateToSection,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -80,10 +82,23 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Zone 3: Primary Actions */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Vercel AI Chatbot Button */}
+          {onOpenChatbot && (
+            <button
+              onClick={onOpenChatbot}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-serif font-medium text-[#FAF8F5] bg-[#290812] border border-[#D4AF37]/60 hover:border-[#D4AF37] hover:bg-[#380b19] transition-all whitespace-nowrap cursor-pointer shadow-sm group"
+              title="Chat with The Decor Studio AI (the-decor-studio-ai-rlo9.vercel.app)"
+            >
+              <LotusKolam size={15} color="#D4AF37" className="group-hover:rotate-45 transition-transform duration-300" />
+              <span className="hidden sm:inline">AI Chatbot</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            </button>
+          )}
+
           {/* AI Stylist Fast-Track Button */}
           <button
             onClick={() => handleNavClick('ai-stylist')}
-            className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-medium text-[#FAF8F5] bg-[#3a0d1b] border border-[#D4AF37]/40 hover:border-[#D4AF37] hover:bg-[#4a1224] transition-all whitespace-nowrap cursor-pointer"
+            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium text-[#FAF8F5] bg-[#3a0d1b] border border-[#D4AF37]/40 hover:border-[#D4AF37] hover:bg-[#4a1224] transition-all whitespace-nowrap cursor-pointer"
             title="Open AI Decor Assistant"
           >
             <Sparkles size={13} className="text-[#D4AF37]" />
@@ -159,7 +174,19 @@ export const Navbar: React.FC<NavbarProps> = ({
               {link.label}
             </button>
           ))}
-          <div className="pt-2">
+          <div className="pt-2 space-y-2">
+            {onOpenChatbot && (
+              <button
+                onClick={() => {
+                  onOpenChatbot();
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-md bg-[#2b0814] border border-[#D4AF37] text-[#FAF8F5] text-sm font-serif"
+              >
+                <LotusKolam size={18} color="#D4AF37" />
+                <span>Open AI Chatbot (Vercel)</span>
+              </button>
+            )}
             <button
               onClick={() => handleNavClick('ai-stylist')}
               className="w-full flex items-center justify-center gap-2 py-2.5 rounded-md bg-[#FAF8F5] text-[#1f050d] text-sm font-medium"

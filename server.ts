@@ -226,6 +226,82 @@ Instructions:
   }
 });
 
+// POST endpoint for Conversational Chatbot
+app.post('/api/ai-chat', async (req: Request, res: Response) => {
+  const { message, history } = req.body;
+  const userQuery = (message || '').trim();
+
+  if (!userQuery) {
+    return res.status(400).json({ reply: 'Please share what room or decor style you are dreaming of!' });
+  }
+
+  // Identify matching catalog items for quick recommendations
+  const qLower = userQuery.toLowerCase();
+  const matchedCatalog = CATALOG_ITEMS.filter((item) => {
+    return qLower.includes(item.name.toLowerCase().slice(0, 5)) ||
+           qLower.includes(item.category.toLowerCase().slice(0, 4)) ||
+           qLower.includes(item.style.toLowerCase().slice(0, 4)) ||
+           qLower.includes(item.room.toLowerCase().slice(0, 4));
+  }).slice(0, 3);
+
+  if (!ai || !apiKey) {
+    // Intelligent contextual fallback
+    let fallbackReply = `Vanakkam! In South Indian interior decor, every corner invites warmth, tranquility, and divine light. `;
+    if (qLower.includes('brass') || qLower.includes('lamp') || qLower.includes('vilakku') || qLower.includes('diya')) {
+      fallbackReply += `For sacred lighting, we recommend our handcrafted Mayil Nilavilakku (Peacock Diya Lamp, ₹3,499) cast in bell metal from Nachiarkoil, or the suspended Kerala Thookku Vilakku (₹2,499) for your entryway.`;
+    } else if (qLower.includes('urli') || qLower.includes('lotus') || qLower.includes('flower')) {
+      fallbackReply += `For floral centerpieces, our Padmam Glazed Lotus Urli Bowl (₹2,199) in wine maroon and antique gold looks sublime floating white lotuses and beeswax tea-lights.`;
+    } else if (qLower.includes('pooja') || qLower.includes('mandir') || qLower.includes('temple')) {
+      fallbackReply += `For your pooja sanctum, pair the Aura Antique Brass Nandi (₹1,699) with our Mayur Brass Dhoop Incense Chalice (₹1,399) and Athangudi Terracotta Diya Tier (₹799).`;
+    } else if (qLower.includes('bedroom') || qLower.includes('relax') || qLower.includes('calm')) {
+      fallbackReply += `For a soothing bedroom atmosphere, light our Mysore Sandalwood & Vetiver Brass Candle (₹899) and pair it with the Malabar Ivory Fluted Bud Vase (₹999) on your bedside console.`;
+    } else if (qLower.includes('budget') || qLower.includes('under') || qLower.includes('₹')) {
+      fallbackReply += `We offer exquisite artisan pieces across all budgets—from the Athangudi Diya Tier (₹799) and Mysore Sandalwood Candle (₹899) to statement temple jharokhas.`;
+    } else {
+      fallbackReply += `Tell me about your room (Living Room, Bedroom, Foyer, or Pooja room), your preferred aesthetic, or your budget, and I'll curate the ideal arrangement for you!`;
+    }
+
+    return res.json({
+      reply: fallbackReply,
+      suggestedItems: matchedCatalog.length > 0 ? matchedCatalog : [CATALOG_ITEMS[0], CATALOG_ITEMS[1]],
+    });
+  }
+
+  try {
+    const systemPrompt = `You are the chief interior styling AI at "The Decor Studio" (the-decor-studio-ai-rlo9.vercel.app), a luxury South Indian and modern home decor boutique.
+Your persona:
+- Warm, knowledgeable, deeply respectful of South Indian artisanal heritage (bell-brass casting, Tanjore foil, Chettinad teak, Cauvery terracotta, and white kolam traditions).
+- Keep responses elegant, concise (2-4 paragraphs max), and grounded in our catalog.
+- When recommending items, quote exact names and prices in ₹ from the catalog:
+${JSON.stringify(CATALOG_ITEMS, null, 2)}
+- Always provide spatial placement advice (e.g. entryway foyer, coffee table center, pooja console, bedside alcove).`;
+
+    const contents = [
+      { role: 'user', parts: [{ text: `User asks: "${userQuery}"` }] }
+    ];
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.8-flash',
+      contents: userQuery,
+      config: {
+        systemInstruction: systemPrompt,
+      },
+    });
+
+    const reply = response.text || 'I would be delighted to assist in curating your home decor.';
+    return res.json({
+      reply,
+      suggestedItems: matchedCatalog.length > 0 ? matchedCatalog : [CATALOG_ITEMS[0], CATALOG_ITEMS[1]],
+    });
+  } catch (err: any) {
+    console.error('Chatbot error:', err?.message);
+    return res.json({
+      reply: `Vanakkam! I'd love to help style your space with handcrafted South Indian brass lamps, lotus urlis, and temple jharokhas. Let me know your room or budget!`,
+      suggestedItems: [CATALOG_ITEMS[0], CATALOG_ITEMS[1]],
+    });
+  }
+});
+
 // Setup Vite or static serving
 async function startServer() {
   if (process.env.NODE_ENV !== 'production') {

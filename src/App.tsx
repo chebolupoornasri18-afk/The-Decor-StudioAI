@@ -13,6 +13,7 @@ import { CartDrawer } from './components/CartDrawer';
 import { CheckoutModal } from './components/CheckoutModal';
 import { WishlistDrawer } from './components/WishlistDrawer';
 import { AIDecorPlanDrawer } from './components/AIDecorPlanDrawer';
+import { DecorStudioChatbot } from './components/DecorStudioChatbot';
 import { Footer } from './components/Footer';
 import { Check, Sparkles } from 'lucide-react';
 
@@ -49,6 +50,7 @@ export default function App() {
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isAIPlanOpen, setIsAIPlanOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
 
   // Transient Toast Notification
@@ -173,6 +175,7 @@ export default function App() {
         onOpenCart={() => setIsCartOpen(true)}
         onOpenWishlist={() => setIsWishlistOpen(true)}
         onOpenAIPlan={() => setIsAIPlanOpen(true)}
+        onOpenChatbot={() => setIsChatbotOpen(true)}
         onNavigateToSection={scrollToSection}
       />
 
@@ -224,7 +227,10 @@ export default function App() {
       </main>
 
       {/* Footer with Deep Maroon & Grand Kolam Backdrop */}
-      <Footer onNavigateToSection={scrollToSection} />
+      <Footer
+        onNavigateToSection={scrollToSection}
+        onOpenChatbot={() => setIsChatbotOpen(true)}
+      />
 
       {/* Drawers & Modals */}
       <CartDrawer
@@ -275,9 +281,18 @@ export default function App() {
         isWishlisted={quickViewProduct ? wishlistIds.includes(quickViewProduct.id) : false}
       />
 
+      {/* The Decor Studio AI Chatbot (the-decor-studio-ai-rlo9.vercel.app) */}
+      <DecorStudioChatbot
+        isOpen={isChatbotOpen}
+        onToggle={() => setIsChatbotOpen(!isChatbotOpen)}
+        onAddToCart={handleAddToCart}
+        onAddToAIPlan={handleAddToAIPlan}
+        onQuickView={(p) => setQuickViewProduct(p)}
+      />
+
       {/* Floating Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-3 rounded bg-[#FAF8F5] text-[#1f050d] border border-[#D4AF37] shadow-2xl flex items-center gap-2.5 text-xs font-serif font-medium tracking-wide animate-in fade-in slide-in-from-bottom-2 duration-150">
+        <div className="fixed bottom-24 right-6 z-50 px-4 py-3 rounded bg-[#FAF8F5] text-[#1f050d] border border-[#D4AF37] shadow-2xl flex items-center gap-2.5 text-xs font-serif font-medium tracking-wide animate-in fade-in slide-in-from-bottom-2 duration-150">
           <Sparkles size={14} className="text-[#997A23] shrink-0" />
           <span>{toastMessage}</span>
         </div>
